@@ -1,0 +1,11 @@
+.favorable {
+    background: green;
+}
+
+.moderate {
+    background: yellow;
+}
+
+.severe {
+    background: red;
+}

@@ -6,6 +6,17 @@ var citySearchEl = document.querySelector('#citySearch');
 var searchContainerEl = document.querySelector('#search-container');
 var searchHistory = [];
 var historyButtonsEl = document.querySelector('#search-container')
+var currentDate = moment().format('MM/DD/YYYY');
+
+//weather variables
+var temp = '';
+var windSpeed = '';
+var humidity = '';
+var uvIndex = '';
+var lat = '';
+var lon = '';
+var weatherIcon = '';
+var name = '';
 
 //call open weather api
 function getWeather(city) {
@@ -18,15 +29,86 @@ function getWeather(city) {
                 if (!searchHistory.includes(city)) {
                     createSearchHistory(city);
                 }
-                console.log(data);
-                var windSpeed = data.wind.speed;
-                var temp = data.main.temp;
-                var humidty = data.main.humidity;
+
+                //set variables for temperature
+                name = data.name;
+                temp = data.main.temp;
+                windSpeed = data.wind.speed;
+                humidity = data.main.humidity;
+                weatherIcon = data['weather'][0]['icon'];
+                
+                //get the UV Index
+                lat = data.coord.lat;
+                lon = data.coord.lon;
+                getUvi();
             })
         } else {
             alert('There was an error locating that information.');
         }
     });
+};
+
+function getUvi() {
+    var apiUrl = 'https://api.openweathermap.org/data/2.5/uvi?lat=' + lat + '&lon=' + lon + '&appid=fe2ea6f139fbd6a02a5aab56324c9b17';
+
+    fetch(apiUrl).then((response) => {
+        if (response.ok) {
+            response.json().then(function(data){
+                uvIndex = data.value;
+                console.log(uvIndex);
+                displayWeather(data);
+            })
+        }
+    });
+};
+
+function displayWeather(data){
+    //create containing div
+    var currentDisplayEl = document.createElement('div');
+    currentDisplayEl.classList = 'card d-inline-block w-100 p-3'
+    
+    //create city name 
+    var cityName = document.createElement('h3');
+    cityName.classList = 'd-inline-block';
+    cityName.innerHTML = name + ' (' + currentDate + ')'
+
+    //add to the containing div
+    currentDisplayEl.appendChild(cityName)
+
+    //create weather icon
+    var imgEl = document.createElement('img');
+    imgEl.classList = 'd-inline-block';
+    imgEl.setAttribute('src', 'http://openweathermap.org/img/wn/' + weatherIcon + '@2x.png');
+
+    //add to containing div
+    currentDisplayEl.appendChild(imgEl)
+
+    //add weather elements to div
+    var currentTemp = document.createElement('p');
+    currentTemp.innerHTML = 'Temperature: ' + temp + '\xB0F';
+    currentDisplayEl.appendChild(currentTemp);
+
+    var currentHumid = document.createElement('p');
+    currentHumid.innerHTML = 'Humidity: ' + humidity + '%';
+    currentDisplayEl.appendChild(currentHumid);
+
+    var currentWind = document.createElement('p');
+    currentWind.innerHTML = 'Wind Speed: ' + windSpeed + ' MPH';
+    currentDisplayEl.appendChild(currentWind);
+
+    var currentUv = document.createElement('p');
+    if (uvIndex < 2) {
+        currentUv.classList = 'bg-success text-white';
+    } else if (uvIndex > 2 && uvIndex < 6) {
+        currentUv.classList = 'bg-warning';
+    } else {
+        currentUv.classList = 'bg-danger text-white';
+    }
+    currentUv.innerHTML = 'UV Index: ' + uvIndex;
+    currentDisplayEl.appendChild(currentUv);
+
+    //add to the main div
+    currentWeatherEl.appendChild(currentDisplayEl);
 };
 
 function formSubmitHandler(event) {

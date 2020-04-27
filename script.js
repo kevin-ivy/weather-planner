@@ -97,14 +97,15 @@ function displayWeather(data){
     currentDisplayEl.appendChild(currentWind);
 
     var currentUv = document.createElement('p');
+    var uvReadout = '';
     if (uvIndex < 2) {
-        currentUv.classList = 'bg-success text-white';
+        uvReadout = "<span class='bg-success text-white p-1 rounded'>";
     } else if (uvIndex > 2 && uvIndex < 6) {
-        currentUv.classList = 'bg-warning';
+        uvReadout = "<span class='bg-warning p-1 text-secondary rounded'>";
     } else {
-        currentUv.classList = 'bg-danger text-white';
+        uvReadout = "<span class='border bg-danger text-white p-1 rounded'>";
     }
-    currentUv.innerHTML = 'UV Index: ' + uvIndex;
+    currentUv.innerHTML = "UV Index: " + uvReadout + uvIndex + " </span>";
     currentDisplayEl.appendChild(currentUv);
 
     //add to the main div

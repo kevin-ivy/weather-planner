@@ -63,6 +63,9 @@ function getUvi() {
 };
 
 function displayWeather(data){
+    //clear previous entries
+    currentWeatherEl.innerHTML = '';
+
     //create containing div
     var currentDisplayEl = document.createElement('div');
     currentDisplayEl.classList = 'card d-inline-block w-100 p-3'
@@ -101,7 +104,7 @@ function displayWeather(data){
     if (uvIndex < 2) {
         uvReadout = "<span class='bg-success text-white p-1 rounded'>";
     } else if (uvIndex > 2 && uvIndex < 6) {
-        uvReadout = "<span class='bg-warning p-1 text-secondary rounded'>";
+        uvReadout = "<span class='bg-warning p-1 text-dark rounded'>";
     } else {
         uvReadout = "<span class='border bg-danger text-white p-1 rounded'>";
     }
